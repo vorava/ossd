@@ -5,11 +5,11 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='ossd',  
-     version='1.0.6',
+     version='1.0.7',
      py_modules=['ossd'],
      author="Vojtech Orava",
      author_email="vojtech.orava@gmail.com",
-     description="OpenSubtitles subtitles downloader",
+     description="OpenSubtitles Subtitles Downloader",
      long_description=long_description,
      long_description_content_type="text/markdown",
      url="https://github.com/vorava/ossd",

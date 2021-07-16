@@ -9,7 +9,7 @@ import requests
 # https://www.opensubtitles.org/en/search/sublanguageid-eng/moviename-NAME
 
 # returns most downloaded subtitles text, params: chromedriver, name of movie
-# if error occurs returns " " and print error code
+# if error occurs returns " " and prints error code
 def get_subtitles(driver, movieName):
     driver.get("https://www.opensubtitles.org/en/search/sublanguageid-eng/moviename-" + movieName)
 
@@ -49,3 +49,31 @@ def get_subtitles(driver, movieName):
     response = requests.get(subtitlesFile)
     text = response.text  # subtitles text
     return text
+
+# parses script lines from default format into one line only text format
+# skips ads on the script start
+def parse_subtitles(lines):
+    output = []
+    lines.replace("\r", "")
+    lineArr = lines.split("\n")
+
+    for i in range(len(lineArr)):
+        try:  # check if line is only number
+            int(lineArr[i])
+            i += 2  # skip 2 lines to get to the text
+            if "www." not in lineArr[i] and "Advertise" not in lineArr[i]:
+                output.append(lineArr[i].replace("\r", ""))
+            # write all text line till there is white line
+            i += 1
+            while lineArr[i].strip() != "" and i < len(lineArr):
+                if "www." not in lineArr[i] and "Advertise" not in lineArr[i]:
+                    output.append(lineArr[i].replace("\r", ""))
+                i += 1
+
+        except ValueError:
+            continue
+
+        except IndexError:
+            break
+
+    return " ".join(output)
