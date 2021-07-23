@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # Licence: MIT (free commercial use)
 # Author: Vojtech Orava
+# Link: https://github.com/vorava/ossd
 
-from selenium import webdriver
 import requests
+import time
 
 # default link:
 # https://www.opensubtitles.org/en/search/sublanguageid-eng/moviename-NAME
 
 # returns most downloaded subtitles text, params: chromedriver, name of movie
 # if error occurs returns " " and prints error code
-def get_subtitles(driver, movieName):
-    driver.get("https://www.opensubtitles.org/en/search/sublanguageid-eng/moviename-" + movieName)
+def get_subtitles(driver, movieName, year = ""):
+    driver.get("https://www.opensubtitles.org/en/search/sublanguageid-eng/moviename-" + movieName + " " + year)
 
     # finding most downloaded subtitles
     try:
@@ -47,6 +48,9 @@ def get_subtitles(driver, movieName):
 
     # downloading subtitles text
     response = requests.get(subtitlesFile)
+    while response.status_code == 429:
+        time.sleep(60)
+        response = requests.get(subtitlesFile)
     text = response.text  # subtitles text
     return text
 
@@ -61,12 +65,14 @@ def parse_subtitles(lines):
         try:  # check if line is only number
             int(lineArr[i])
             i += 2  # skip 2 lines to get to the text
-            if "www." not in lineArr[i] and "Advertise" not in lineArr[i]:
+            if "Support us and become VIP member" not in lineArr[i] and "Advertise" not in lineArr[i]\
+                    and "www.OpenSubtitles.org" not in lineArr[i]:
                 output.append(lineArr[i].replace("\r", ""))
             # write all text line till there is white line
             i += 1
             while lineArr[i].strip() != "" and i < len(lineArr):
-                if "www." not in lineArr[i] and "Advertise" not in lineArr[i]:
+                if "Support us and become VIP member" not in lineArr[i] and "Advertise" not in lineArr[i]\
+                        and "www.OpenSubtitles.org" not in lineArr[i]:
                     output.append(lineArr[i].replace("\r", ""))
                 i += 1
 

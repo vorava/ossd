@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='ossd',  
-     version='1.0.7',
+     version='1.0.8',
      py_modules=['ossd'],
      author="Vojtech Orava",
      author_email="vojtech.orava@gmail.com",
